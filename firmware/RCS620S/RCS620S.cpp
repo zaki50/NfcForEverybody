@@ -309,7 +309,7 @@ void RCS620S::writeSerial(
     const uint8_t* data,
     uint16_t len)
 {
-    Serial.write(data, len);
+    SERIAL_RCS620S.write(data, len);
 }
 
 int RCS620S::readSerial(
@@ -324,8 +324,8 @@ int RCS620S::readSerial(
             return 0;
         }
 
-        if (Serial.available() > 0) {
-            data[nread] = Serial.read();
+        if (SERIAL_RCS620S.available() > 0) {
+            data[nread] = SERIAL_RCS620S.read();
             nread++;
         }
     }
@@ -335,7 +335,7 @@ int RCS620S::readSerial(
 
 void RCS620S::flushSerial(void)
 {
-    Serial.flush();
+    SERIAL_RCS620S.flush();
 }
 
 int RCS620S::checkTimeout(unsigned long t0)

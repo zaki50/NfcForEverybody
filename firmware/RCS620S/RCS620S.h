@@ -16,6 +16,15 @@
 #define RCS620S_MAX_CARD_RESPONSE_LEN    254
 #define RCS620S_MAX_RW_RESPONSE_LEN      265
 
+
+/*
+  for default Serial port, use Serial
+  for TX1/RX1,             use Serial1
+  for TX2/RX2,             use Serial2
+  for TX3/RX3,             use Serial3
+*/
+#define SERIAL_RCS620S Serial1
+
 /* --------------------------------
  * Class Declaration
  * -------------------------------- */
