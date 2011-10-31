@@ -8,7 +8,7 @@
 
 #define COMMAND_TIMEOUT  400
 //#define PUSH_TIMEOUT    2100
-#define POLLING_INTERVAL 100
+#define POLLING_INTERVAL 10
 
 #define LED_PIN 13
 
@@ -56,11 +56,19 @@ void setup()
 int do_polling(uint16_t systemCode);
 size_t read_ndef(uint8_t* buf, size_t buf_len);
 void write_felica_target_info(uint8_t *id, size_t id_len, uint8_t *data, size_t data_len);
+void write_target_not_found(void);
 void flush_led(int count);
 
 void loop()
 {
   if (acc.isConnected()) {
+    byte inBuf[1];
+    //Serial.println("waiting for polling order");
+    int len = acc.read(inBuf, sizeof(inBuf), 1);
+    if (len <= 0) {
+      goto end;
+    }
+
     digitalWrite(LED_PIN, HIGH);
     {
       uint16_t systemCode = 0xffff;
@@ -84,10 +92,14 @@ void loop()
           uint8_t idm[sizeof(rcs620s.idm)];
           memcpy(idm, rcs620s.idm, sizeof(idm)); // from rcs620s.idm to idm
           write_felica_target_info(idm, sizeof(idm), NULL, 0);
+        } else {
+          write_target_not_found();
         }
       }
     }
   }
+
+  end:
 
   // 常に実行する処理
   rcs620s.rfOff();
@@ -105,7 +117,10 @@ int do_polling(uint16_t systemCode = 0xffff)
   if (!ret) {
     //カードが検出されなかったので、リリース待ちを解除
     waitCardReleased = 0;
-    memset(prev_idm, 0x0, sizeof(prev_idm));
+    if (systemCode == 0xffff) {
+      // ワイルドカードで見つからないということなので過去のカードのことは忘れる
+      memset(prev_idm, 0x0, sizeof(prev_idm));
+    }
     return 0;
   }
 
@@ -171,6 +186,15 @@ void write_felica_target_info(uint8_t *id, size_t id_len, uint8_t *data, size_t 
     Serial.println("byte(s)");
   }
 }
+
+void write_target_not_found(void)
+{
+  uint8_t outbuf[1];
+  outbuf[0] = ' ';
+
+  int written = acc.write(outbuf, sizeof(outbuf));
+}
+
 
 void flush_led(int count)
 {
