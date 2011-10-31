@@ -209,10 +209,15 @@ public class BaseAccessoryActivity extends Activity implements Runnable {
                             if (rest == 0) {
                                 ret = mInputStream.read(buffer);
                                 if (ret < 0) {
-                                    break;
+                                    return;
                                 }
                                 consumed = 0;
                                 rest = ret;
+                            }
+                            if (rest < felicaHeaderBuf.length) {
+                                Log.d(TAG, "buffer underflow. expected: " + felicaHeaderBuf.length
+                                        + ", rest: " + rest);
+                                return;
                             }
                             System.arraycopy(buffer, consumed, felicaHeaderBuf, 0,
                                     felicaHeaderBuf.length);
@@ -229,10 +234,15 @@ public class BaseAccessoryActivity extends Activity implements Runnable {
                             if (dataLength != 0 && rest == 0) {
                                 ret = mInputStream.read(buffer);
                                 if (ret < 0) {
-                                    break;
+                                    return;
                                 }
                                 consumed = 0;
                                 rest = ret;
+                            }
+                            if (rest < dataLength) {
+                                Log.d(TAG, "buffer underflow. expected: " + dataLength //
+                                        + ", rest: " + rest);
+                                return;
                             }
                             System.arraycopy(buffer, consumed, dataBuf, 0,
                                     dataLength);
