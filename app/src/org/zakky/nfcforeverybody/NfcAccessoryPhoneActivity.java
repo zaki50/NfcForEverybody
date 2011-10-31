@@ -1,18 +1,31 @@
 
 package org.zakky.nfcforeverybody;
 
+import android.content.Intent;
 import android.nfc.FormatException;
 import android.nfc.NdefMessage;
+import android.nfc.NfcAdapter;
+import android.nfc.Tag;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.TextView;
 
 public class NfcAccessoryPhoneActivity extends BaseAccessoryActivity {
+
+    private static final String TAG = NfcAccessoryPhoneActivity.class.getSimpleName();
+
+    private final NfcAccessoryPhoneActivity self = this;
 
     private TextView mTagType;
 
     private TextView mTagId;
 
     private TextView mNdef;
+
+    private Button mSendButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -23,14 +36,53 @@ public class NfcAccessoryPhoneActivity extends BaseAccessoryActivity {
         mTagType = (TextView) findViewById(R.id.tag_type);
         mTagId = (TextView) findViewById(R.id.tag_id);
         mNdef = (TextView) findViewById(R.id.ndef);
-        
+
+        mSendButton = (Button) findViewById(R.id.send);
+        mSendButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final FelicaInfoMsg o = (FelicaInfoMsg) mSendButton.getTag();
+
+                final Tag tag = NfcUtil.createFelicaTag(o.getIdm());
+                final NdefMessage[] messages = NfcUtil.createNdefMessages(o.getData());
+
+                // TODO 本当は、messages != null であれば先に ACTION_NDEF_DISCOVERED を受ける人がいないか探す
+
+                final Intent i;
+                if (NfcUtil.existsActivitiesForTechDiscovered(self)) {
+                    i = new Intent(NfcAdapter.ACTION_TECH_DISCOVERED);
+                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    i.putExtra(NfcAdapter.EXTRA_ID, o.getIdm());
+                    i.putExtra(NfcAdapter.EXTRA_TAG, tag);
+                    if (messages != null) {
+                        i.putExtra(NfcAdapter.EXTRA_NDEF_MESSAGES, messages);
+                    }
+                } else if (NfcUtil.existsActivitiesForTagDiscovered(self)) {
+                    i = new Intent(NfcAdapter.ACTION_TAG_DISCOVERED);
+                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    i.putExtra(NfcAdapter.EXTRA_ID, o.getIdm());
+                    i.putExtra(NfcAdapter.EXTRA_TAG, tag);
+                    if (messages != null) {
+                        i.putExtra(NfcAdapter.EXTRA_NDEF_MESSAGES, messages);
+                    }
+                } else {
+                    i = null;
+                }
+                if (i != null) {
+                    startActivity(i);
+                } else {
+                    Log.i(TAG, "activity not found");
+                }
+            }
+        });
+
         enableControls(false);
     }
 
     @Override
     protected void enableControls(boolean enable) {
         super.enableControls(enable);
-        
+
         mTagType.setEnabled(enable);
         if (!enable) {
             mTagType.setText("");
@@ -43,11 +95,13 @@ public class NfcAccessoryPhoneActivity extends BaseAccessoryActivity {
         if (!enable) {
             mNdef.setText("");
         }
+
+        mSendButton.setEnabled(enable);
     }
 
     @Override
     protected void handleFelicaMessage(FelicaInfoMsg o) {
-        
+
         mTagType.setText("FeliCa");
         mTagId.setText(toHexString(o.getIdm()));
         final byte[] data = o.getData();
@@ -61,6 +115,9 @@ public class NfcAccessoryPhoneActivity extends BaseAccessoryActivity {
                 mNdef.setText("invalid NDEF tag");
             }
         }
+
+        mSendButton.setTag(o);
+        enableControls(true);
     }
 
     private static String toHexString(byte[] bytes) {

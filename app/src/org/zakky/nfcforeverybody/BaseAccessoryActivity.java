@@ -149,11 +149,10 @@ public abstract class BaseAccessoryActivity extends Activity implements Runnable
         final Thread thread = new Thread(null, this, "NFCforEverybody");
         thread.start();
         Log.d(TAG, "accessory opened");
-        enableControls(true);
     }
 
     private void closeAccessory() {
-        enableControls(false);
+        //enableControls(false);
 
         try {
             if (mFileDescriptor != null) {

@@ -25,4 +25,10 @@
         android:layout_margin="10dp"
         android:hint="NDEF 情報" />
 
+    <Button
+        android:id="@+id/send"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="送信" />
 </LinearLayout>
