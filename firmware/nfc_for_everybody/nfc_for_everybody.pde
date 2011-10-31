@@ -8,7 +8,7 @@
 
 #define COMMAND_TIMEOUT  400
 //#define PUSH_TIMEOUT    2100
-#define POLLING_INTERVAL 500
+#define POLLING_INTERVAL 100
 
 #define LED_PIN 13
 
@@ -67,6 +67,7 @@ void loop()
       // 最初に NDEF のシステムコードで polling
       int found = do_polling(SYSTEM_CODE_FOR_NDEF);
       if (found) {
+        Serial.println("NDEF card found!");
         uint8_t idm[sizeof(rcs620s.idm)];
         memcpy(idm, rcs620s.idm, sizeof(idm)); // from rcs620s.idm to idm
         systemCode = SYSTEM_CODE_FOR_NDEF;
@@ -79,6 +80,7 @@ void loop()
       else { // ワイルドカードでポーリング。 NDEF で無いことは確定
         found = do_polling(systemCode);
         if (found) {
+          Serial.println("non-NDEF card found!");
           uint8_t idm[sizeof(rcs620s.idm)];
           memcpy(idm, rcs620s.idm, sizeof(idm)); // from rcs620s.idm to idm
           write_felica_target_info(idm, sizeof(idm), NULL, 0);
@@ -154,9 +156,19 @@ void write_felica_target_info(uint8_t *id, size_t id_len, uint8_t *data, size_t 
   (*p++) = (uint8_t) ((data_len >> 8) & 0xff);
   (*p++) = (uint8_t) ((data_len >> 0) & 0xff);
 
-  acc.write(outbuf, outbuf_len);
+  int written = acc.write(outbuf, outbuf_len);
+  Serial.print("sent ");
+  Serial.print(written);
+  Serial.print("byte(s), expected: ");
+  Serial.print(outbuf_len);
+  Serial.println("byte(s)");
   if (data != NULL && 0 < data_len) {
-    acc.write(data, data_len);
+    written = acc.write(data, data_len);
+    Serial.print("sent ");
+    Serial.print(written);
+    Serial.print("byte(s), expected: ");
+    Serial.print(data_len);
+    Serial.println("byte(s)");
   }
 }
 
