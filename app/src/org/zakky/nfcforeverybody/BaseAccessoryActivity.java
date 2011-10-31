@@ -176,6 +176,7 @@ public class BaseAccessoryActivity extends Activity implements Runnable {
 
     public void run() {
 
+        // IDm(8) + dataLen(2)
         byte[] felicaHeaderBuf = new byte[10];
         byte[] dataBuf = new byte[1024];
 
@@ -250,7 +251,7 @@ public class BaseAccessoryActivity extends Activity implements Runnable {
                 }
             }
         } catch (IOException e) {
-            Log.d(TAG, "mInputStream closed.", e);
+            Log.d(TAG, "mInputStream closed.");
         }
     }
 
