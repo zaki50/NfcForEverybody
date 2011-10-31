@@ -30,6 +30,7 @@ void setup()
 {
   int ret;
 
+  // clear
   memset(prev_idm, 0x0, sizeof(prev_idm));
 
   digitalWrite(LED_PIN, LOW);
@@ -102,7 +103,16 @@ int do_polling(uint16_t systemCode = 0xffff)
   if (!ret) {
     //カードが検出されなかったので、リリース待ちを解除
     waitCardReleased = 0;
+    memset(prev_idm, 0x0, sizeof(prev_idm));
+    return 0;
   }
+
+  if (memcmp(prev_idm, rcs620s.idm, sizeof(prev_idm)) == 0) {
+    // 前回と同じなので無視
+    return 0;
+  }
+
+  memcpy(prev_idm, rcs620s.idm, sizeof(prev_idm));
 
   /*
   else if (!waitCardReleased) {
