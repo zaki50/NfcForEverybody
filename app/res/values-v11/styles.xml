@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="LightThemeSelector" parent="@android:style/Theme.Holo.Light" />
+    <style name="LightThemeSelector" parent="@android:style/Theme.Holo.Light">
+        <item name="android:textColor">@color/text</item>
+        <item name="android:background">#c7c7ff</item>
+    </style>
 
 </resources>

@@ -5,7 +5,6 @@ import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 
 import android.app.Activity;
 import android.app.PendingIntent;
@@ -19,12 +18,11 @@ import android.os.Message;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
 import android.widget.SeekBar;
-import android.widget.Toast;
 
 import com.android.future.usb.UsbAccessory;
 import com.android.future.usb.UsbManager;
 
-public class BaseAccessoryActivity extends Activity implements Runnable {
+public abstract class BaseAccessoryActivity extends Activity implements Runnable {
     private static final String TAG = BaseAccessoryActivity.class.getSimpleName();
 
     private static final String ACTION_USB_PERMISSION = "org.zakky.nfcforeverybody.action.USB_PERMISSION";
@@ -64,6 +62,7 @@ public class BaseAccessoryActivity extends Activity implements Runnable {
                 if (accessory != null && accessory.equals(mAccessory)) {
                     closeAccessory();
                 }
+                enableControls(false);
             }
         }
     };
@@ -83,10 +82,6 @@ public class BaseAccessoryActivity extends Activity implements Runnable {
             mAccessory = (UsbAccessory) getLastNonConfigurationInstance();
             openAccessory(mAccessory);
         }
-
-        setContentView(R.layout.main);
-
-        enableControls(false);
     }
 
     @Override
@@ -244,8 +239,7 @@ public class BaseAccessoryActivity extends Activity implements Runnable {
                                         + ", rest: " + rest);
                                 return;
                             }
-                            System.arraycopy(buffer, consumed, dataBuf, 0,
-                                    dataLength);
+                            System.arraycopy(buffer, consumed, dataBuf, 0, dataLength);
                             consumed += dataLength;
                             rest -= dataLength;
 
@@ -265,7 +259,7 @@ public class BaseAccessoryActivity extends Activity implements Runnable {
         }
     }
 
-    private static final class FelicaInfoMsg {
+    static final class FelicaInfoMsg {
         private final byte[] mIdm;
 
         private final byte[] mData;
@@ -300,9 +294,7 @@ public class BaseAccessoryActivity extends Activity implements Runnable {
         }
     };
 
-    protected void handleFelicaMessage(FelicaInfoMsg o) {
-        Toast.makeText(this, "IDm: " + Arrays.toString(o.getIdm()), Toast.LENGTH_LONG).show();
-    }
+    protected abstract void handleFelicaMessage(FelicaInfoMsg o);
 
     public void onStartTrackingTouch(SeekBar seekBar) {
     }

@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="LightThemeSelector" parent="@android:style/Theme.Light" />
+    <color name="text">#0063b0</color>
+
+    <style name="LightThemeSelector" parent="@android:style/Theme.Light">
+
+        <!-- <item name="android:textColor"></item> -->
+        <item name="android:background">#c7e7ff</item>
+    </style>
 
 </resources>
