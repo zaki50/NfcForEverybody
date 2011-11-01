@@ -5,30 +5,50 @@
     android:orientation="vertical" >
 
     <TextView
+        android:id="@+id/no_tag"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_margin="10dp"
+        android:gravity="center"
+        android:textSize="36sp"
+        android:text="カードをかざしてください" />
+
+    <TextView
         android:id="@+id/tag_type"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:hint="タグタイプ" />
+        android:hint="タグタイプ"
+        android:textSize="36sp"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/tag_id"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:hint="ID" />
+        android:hint="ID"
+        android:textSize="30sp"
+        android:gravity="right"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/ndef"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:hint="NDEF 情報" />
+        android:hint="NDEF 情報"
+        android:textSize="20sp"
+        android:gravity="right"
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/send"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:text="送信" />
+        android:text="送信"
+        android:textSize="36sp"
+        android:layout_gravity="right"
+        android:visibility="gone" />
 </LinearLayout>

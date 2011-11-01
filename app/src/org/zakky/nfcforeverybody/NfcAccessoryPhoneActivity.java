@@ -19,6 +19,8 @@ public class NfcAccessoryPhoneActivity extends BaseAccessoryActivity {
 
     private final NfcAccessoryPhoneActivity self = this;
 
+    private TextView mNoTag;
+
     private TextView mTagType;
 
     private TextView mTagId;
@@ -32,6 +34,8 @@ public class NfcAccessoryPhoneActivity extends BaseAccessoryActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.reflector);
+
+        mNoTag = (TextView) findViewById(R.id.no_tag);
 
         mTagType = (TextView) findViewById(R.id.tag_type);
         mTagId = (TextView) findViewById(R.id.tag_id);
@@ -83,20 +87,25 @@ public class NfcAccessoryPhoneActivity extends BaseAccessoryActivity {
     protected void enableControls(boolean enable) {
         super.enableControls(enable);
 
-        mTagType.setEnabled(enable);
+        mNoTag.setVisibility(enable ? View.GONE : View.VISIBLE);
+
+        mTagType.setVisibility(enable ? View.VISIBLE : View.GONE);
         if (!enable) {
             mTagType.setText("");
         }
-        mTagId.setEnabled(enable);
+        mTagId.setVisibility(enable ? View.VISIBLE : View.GONE);
         if (!enable) {
             mTagId.setText("");
         }
-        mNdef.setEnabled(enable);
+        mNdef.setVisibility(enable ? View.VISIBLE : View.GONE);
         if (!enable) {
             mNdef.setText("");
         }
 
-        mSendButton.setEnabled(enable);
+        mSendButton.setVisibility(enable ? View.VISIBLE : View.GONE);
+        if (!enable) {
+            mSendButton.setTag(null);
+        }
     }
 
     @Override
