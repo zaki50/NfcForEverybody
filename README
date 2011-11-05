@@ -1,0 +1,9 @@
+2011年11月1日の Google Developer Day 2011 Tokyo の OpenCall ADK に "NFC for Everybody" として出展した際に使用したプログラムのソースコードです。
+
+ライセンスは、 Apache License 2.0 です。ただし、 firmware/RCS620S ディレクトリの中のコードは Sony Corporation が著作権を保持しているので、 Sony Corporation のライセンスに従います。
+
+app/  
+  Android 用のアプリケーションです。
+
+firmware/
+  Arduino 用のファームウェアのソースコードです。ADK を前提にしています。
